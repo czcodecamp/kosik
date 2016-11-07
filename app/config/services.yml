@@ -36,6 +36,10 @@ services:
     class: AppBundle\Facade\UserFacade
     autowire: true
 
+  app.facade.cart_facade:
+    class: AppBundle\Facade\CartFacade
+    autowire: true
+
   app.repository.address_repository:
     class: AppBundle\Repository\AddressRepository
     factory:   ['@doctrine.orm.default_entity_manager', getRepository]
