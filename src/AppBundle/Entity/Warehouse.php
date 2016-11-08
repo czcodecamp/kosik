@@ -2,12 +2,13 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @author Vašek Boch <vasek.boch@live.com>
  * @author Jan Klat <jenik@klatys.cz>
  *
- * @ORM\Entity(repositoryClass="AppBundle\Repository\WarehouseRepository")
+ * @ORM\Entity
  */
 class Warehouse
 {
@@ -92,6 +93,7 @@ class Warehouse
 
 	/**
 	 * @param string $type
+	 * @return Warehouse
 	 */
 	public function setType($type)
 	{

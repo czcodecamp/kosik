@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @author Vašek Boch <vasek.boch@live.com>
  * @author Jan Klat <jenik@klatys.cz>
  *
- * @ORM\Entity(repositoryClass="AppBundle\Repository\WarehouseProductRepository")
+ * @ORM\Entity
  */
 class WarehouseProduct
 {
@@ -28,7 +28,7 @@ class WarehouseProduct
 
 	/**
 	 * @var Warehouse
-	 * @ORM\OneToMany(targetEntity="Warehouse")
+	 * @ORM\ManyToOne(targetEntity="Warehouse")
 	 */
 	private $warehouse;
 
@@ -68,7 +68,7 @@ class WarehouseProduct
 	 */
 	public function getProduct()
 	{
-		return $this->cart;
+		return $this->product;
 	}
 
 	/**

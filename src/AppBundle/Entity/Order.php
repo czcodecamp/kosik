@@ -2,12 +2,13 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @author Vašek Boch <vasek.boch@live.com>
  * @author Jan Klat <jenik@klatys.cz>
  *
- * @ORM\Entity(repositoryClass="AppBundle\Repository\OrderRepository")
+ * @ORM\Entity
  */
 class Order
 {
@@ -30,19 +31,19 @@ class Order
 	/**
 	 * @Assert\NotBlank()
 	 * @var User
-	 * @ORM\OneToOne(targetEntity="User", mappedBy="user")
+	 * @ORM\ManyToOne(targetEntity="User")
 	 */
 	private $user;
 
 	/**
 	 * @var Address
-	 * @ORM\OneToOne(targetEntity="Address", nullable=true)
+	 * @ORM\OneToOne(targetEntity="Address")
 	 */
 	private $deliveryAddress;
 
 	/**
 	 * @var Address
-	 * @ORM\OneToOne(targetEntity="Address", nullable=true)
+	 * @ORM\OneToOne(targetEntity="Address")
 	 */
 	private $invoiceAddress;
 
@@ -53,7 +54,7 @@ class Order
 
 	/**
 	 * @var Sale
-	 * @ORM\ManyToOne(targetEntity="Sale", nullable=true)
+	 * @ORM\ManyToOne(targetEntity="Sale")
 	 */
 	private $sale;
 

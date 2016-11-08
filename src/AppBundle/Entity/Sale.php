@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @author Vašek Boch <vasek.boch@live.com>
  * @author Jan Klat <jenik@klatys.cz>
  *
- * @ORM\Entity(repositoryClass="AppBundle\Repository\SaleRepository")
+ * @ORM\Entity
  */
 class Sale
 {
@@ -70,6 +70,7 @@ class Sale
 
 	/**
 	 * @param string $type
+	 * @return Sale
 	 */
 	public function setType($type)
 	{
@@ -94,6 +95,7 @@ class Sale
 
 	/**
 	 * @param int $amount
+	 * @return Sale
 	 */
 	public function setAmount($amount)
 	{
@@ -111,6 +113,7 @@ class Sale
 
 	/**
 	 * @param int $percent
+	 * @return Sale
 	 */
 	public function setPercent($percent)
 	{
