@@ -40,16 +40,6 @@ class SaleCode
 	}
 
 	/**
-	 * @param int $id
-	 * @return self
-	 */
-	public function setId($id)
-	{
-		$this->id = $id;
-		return $this;
-	}
-
-	/**
 	 * @return string
 	 */
 	public function getCode()

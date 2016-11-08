@@ -35,16 +35,6 @@ class Cart
 	}
 
 	/**
-	 * @param int $id
-	 * @return self
-	 */
-	public function setId($id)
-	{
-		$this->id = $id;
-		return $this;
-	}
-
-	/**
 	 * @return User
 	 */
 	public function getUser()

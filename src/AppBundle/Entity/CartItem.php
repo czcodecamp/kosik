@@ -53,16 +53,6 @@ class CartItem
 	}
 
 	/**
-	 * @param int $id
-	 * @return self
-	 */
-	public function setId($id)
-	{
-		$this->id = $id;
-		return $this;
-	}
-
-	/**
 	 * @return Cart
 	 */
 	public function getCart()

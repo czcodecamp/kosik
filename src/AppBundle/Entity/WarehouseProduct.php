@@ -54,16 +54,6 @@ class WarehouseProduct
 	}
 
 	/**
-	 * @param int $id
-	 * @return self
-	 */
-	public function setId($id)
-	{
-		$this->id = $id;
-		return $this;
-	}
-
-	/**
 	 * @return Product
 	 */
 	public function getProduct()
