@@ -1,6 +1,19 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <div class="row"></div>
+    <h1>Košík</h1>
+
+    {% for cartItem in cartItems %}
+        <div class="row">
+            <div class="col-sm-12 col-lg-12 col-md-12">
+                <a href="{{ path("product_detail", {"slug": cartItem.product.slug }) }}">
+                    {{ cartItem.product.title }}
+                </a>
+                {{ cartItem.quantity }}
+                x
+                {{ cartItem.product.price }} Kč
+            </div>
+        </div>
+    {% endfor %}
 {% endblock %}
 

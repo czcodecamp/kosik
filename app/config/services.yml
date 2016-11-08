@@ -44,6 +44,10 @@ services:
     class: AppBundle\Facade\CartFacade
     autowire: true
 
+  app.facade.cart_item_facade:
+    class: AppBundle\Facade\CartItemFacade
+    autowire: true
+
   app.repository.address_repository:
     class: AppBundle\Repository\AddressRepository
     factory:   ['@doctrine.orm.default_entity_manager', getRepository]
@@ -63,6 +67,16 @@ services:
     class: AppBundle\Repository\ProductRepository
     factory:   ['@doctrine.orm.default_entity_manager', getRepository]
     arguments: ['AppBundle\Entity\Product']
+
+  app.repository.cart_repository:
+    class: AppBundle\Repository\CartRepository
+    factory:   ['@doctrine.orm.default_entity_manager', getRepository]
+    arguments: ['AppBundle\Entity\Cart']
+
+  app.repository.cart_item_repository:
+    class: AppBundle\Repository\CartItemRepository
+    factory:   ['@doctrine.orm.default_entity_manager', getRepository]
+    arguments: ['AppBundle\Entity\CartItem']
 
   encoder:
     class: Symfony\Component\Security\Core\Encoder\BCryptPasswordEncoder

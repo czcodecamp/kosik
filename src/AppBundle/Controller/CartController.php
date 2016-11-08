@@ -3,6 +3,8 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Facade\CartFacade;
+use AppBundle\Facade\CartItemFacade;
+use AppBundle\Facade\UserFacade;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
@@ -13,13 +15,24 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
  */
 class CartController
 {
+	/** @var UserFacade */
+	private $userFacade;
+
+	/** @var CartFacade */
 	private $cartFacade;
 
+	/** @var CartItemFacade */
+	private $cartItemFacade;
+
 	public function __construct(
-		CartFacade $cartFacade
+		UserFacade $userFacade,
+		CartFacade $cartFacade,
+		CartItemFacade $cartItemFacade
 	) {
 
+		$this->userFacade = $userFacade;
 		$this->cartFacade = $cartFacade;
+		$this->cartItemFacade = $cartItemFacade;
 	}
 
 	/**
@@ -28,7 +41,13 @@ class CartController
 	 */
 	public function actionDetail()
 	{
-		return [];
+		$user = $this->userFacade->getUser();
+		$cart = $this->cartFacade->createIfNotExists($user);
+		$items = $this->cartItemFacade->findByCart($cart);
+
+		return [
+			'cartItems' => $items,
+		];
 	}
 
 }
