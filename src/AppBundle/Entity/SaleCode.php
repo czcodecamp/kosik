@@ -21,6 +21,13 @@ class SaleCode
 	private $id;
 
 	/**
+	 * @var Sale
+	 * @ORM\ManyToOne(targetEntity="Sale")
+	 */
+	private $sale;
+
+	/**
+	 * @ORM\Column(type="string")
 	 * @var string
 	 */
 	private $code;
@@ -37,6 +44,22 @@ class SaleCode
 	public function getId()
 	{
 		return $this->id;
+	}
+
+	/**
+	 * @return Sale
+	 */
+	public function getSale(): Sale
+	{
+		return $this->sale;
+	}
+
+	/**
+	 * @param Sale $sale
+	 */
+	public function setSale(Sale $sale)
+	{
+		$this->sale = $sale;
 	}
 
 	/**

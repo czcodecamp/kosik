@@ -2,6 +2,7 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @author Vašek Boch <vasek.boch@live.com>
@@ -25,6 +26,8 @@ class Sale
 	private $id;
 
 	/**
+	 * @Assert\NotBlank()
+	 * @ORM\Column(type="string")
 	 * @var string
 	 */
 	private $type;
