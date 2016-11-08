@@ -24,7 +24,7 @@ class Order
 	/**
 	 * @Assert\NotBlank()
 	 * @var Cart
-	 * @ORM\OneToOne(targetEntity="Cart", mappedBy="cart")
+	 * @ORM\ManyToOne(targetEntity="Cart")
 	 */
 	private $cart;
 
@@ -37,13 +37,13 @@ class Order
 
 	/**
 	 * @var Address
-	 * @ORM\OneToOne(targetEntity="Address")
+	 * @ORM\ManyToOne(targetEntity="Address")
 	 */
 	private $deliveryAddress;
 
 	/**
 	 * @var Address
-	 * @ORM\OneToOne(targetEntity="Address")
+	 * @ORM\ManyToOne(targetEntity="Address")
 	 */
 	private $invoiceAddress;
 
