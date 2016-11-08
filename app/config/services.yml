@@ -24,6 +24,10 @@ services:
     class: AppBundle\Controller\UserController
     autowire: true
 
+  app.controller.cart_controller:
+    class: AppBundle\Controller\CartController
+    autowire: true
+
   app.facade.category_facade:
     class: AppBundle\Facade\CategoryFacade
     autowire: true
