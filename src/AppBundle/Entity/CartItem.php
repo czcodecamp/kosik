@@ -123,4 +123,12 @@ class CartItem
 		$this->pricePerItem = $pricePerItem;
 		return $this;
 	}
+
+	/**
+	 * @return int
+	 */
+	public function getTotalPrice()
+	{
+		return $this->quantity * $this->pricePerItem;
+	}
 }
