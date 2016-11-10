@@ -5,8 +5,16 @@ namespace AppBundle\Controller;
 use AppBundle\Facade\CartFacade;
 use AppBundle\Facade\CartItemFacade;
 use AppBundle\Facade\UserFacade;
+use AppBundle\FormType\CartFormType;
+use AppBundle\FormType\VO\CartItemVO;
+use AppBundle\FormType\VO\CartVO;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Component\Form\FormFactory;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Routing\RouterInterface;
 
 /**
  * @author Vašek Boch <vasek.boch@live.com>
@@ -24,30 +32,76 @@ class CartController
 	/** @var CartItemFacade */
 	private $cartItemFacade;
 
+	/** @var RouterInterface */
+	private $router;
+
+	/** @var FormFactory */
+	private $formFactory;
+
 	public function __construct(
 		UserFacade $userFacade,
 		CartFacade $cartFacade,
-		CartItemFacade $cartItemFacade
+		CartItemFacade $cartItemFacade,
+		FormFactory $formFactory,
+		RouterInterface $router
 	) {
 
 		$this->userFacade = $userFacade;
 		$this->cartFacade = $cartFacade;
 		$this->cartItemFacade = $cartItemFacade;
+		$this->formFactory = $formFactory;
+		$this->router = $router;
 	}
 
 	/**
 	 * @Route("/kosik", name="cart_detail")
 	 * @Template("cart/detail.html.twig")
 	 */
-	public function actionDetail()
+	public function actionDetail(Request $request)
 	{
 		$user = $this->userFacade->getUser();
 		$cart = $this->cartFacade->createIfNotExists($user);
-		$items = $this->cartItemFacade->findByCart($cart);
+		$cartItems = $this->cartItemFacade->findByCart($cart);
+		$totalPrice = $this->cartItemFacade->getTotalPrice($cartItems);
+
+		$cartItemsVO = [];
+		foreach ($cartItems as $cartItem) {
+			$cartItemsVO[] = CartItemVO::createFromCartItem($cartItem);
+		}
+		$cartVO = new CartVO();
+		$cartVO->setCartItems($cartItemsVO);
+
+		$form = $this->formFactory->create(CartFormType::class, $cartVO);
+
+		$form->handleRequest($request);
+		if ($form->isSubmitted() && $form->isValid()) {
+			$this->cartItemFacade->updateQuantities($cartVO);
+
+			return RedirectResponse::create($this->router->generate("cart_detail"));
+		}
 
 		return [
-			'cartItems' => $items,
+			"form" => $form->createView(),
+			'totalPrice' => $totalPrice,
+			'cartItems' => $cartItems,
+			"user" => $this->userFacade->getUser(),
 		];
+	}
+	/**
+	 * @Route("/kosik/remove/{id}", name="cart_remove_item", requirements={"id": "\d+"})
+	 * @Template("cart/detail.html.twig")
+	 */
+	public function actionRemoveItem($id)
+	{
+		$cartItem = $this->cartItemFacade->find($id);
+
+		if ($cartItem === null) {
+			throw new NotFoundHttpException("Položka nebyla nalezena");
+		}
+
+		$this->cartItemFacade->remove($cartItem);
+
+		return RedirectResponse::create($this->router->generate("cart_detail"));
 	}
 
 }
