@@ -9,6 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @author Jan Klat <jenik@klatys.cz>
  *
  * @ORM\Entity
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\WarehouseProductRepository")
  */
 class WarehouseProduct
 {
