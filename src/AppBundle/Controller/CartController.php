@@ -112,9 +112,9 @@ class CartController
 	}
 
 	/**
-	 * @Route("/kosik/add/{id}", name="cart_add_item", requirements={"id": "\d+"})
+	 * @Route("/kosik/add/{id}/{quantity}", name="cart_add_item", requirements={"id": "\d+", "quantity": "\d+"})
 	 */
-	public function actionAddItem($id)
+	public function actionAddItem($id, $quantity = 1)
 	{
 		$product = $this->productFacade->find($id);
 		if (!$product) {
@@ -124,8 +124,7 @@ class CartController
 		$user = $this->userFacade->getUser();
 		$cart = $this->cartFacade->createIfNotExists($user);
 
-		$this->cartItemFacade->add($cart, $product);
-
+		$this->cartItemFacade->add($cart, $product, $quantity);
 
 		return RedirectResponse::create($this->router->generate("cart_detail"));
 	}
