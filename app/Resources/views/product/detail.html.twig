@@ -36,4 +36,12 @@
             </div>
         </div>
     {% endfor %}
+
+    {{ product.description }}
+
+    {{ form_start(form) }}
+    {{ form_widget(form.quantity) }} ks
+    <button class="btn btn-danger" type="submit">Přidat do košíku</button>
+    {{ form_end(form) }}
+
 {% endblock %}
