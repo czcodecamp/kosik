@@ -7,10 +7,18 @@
     <h1> {{ product.title }}</h1>
     <img src="{{ product.image }}" />
 
-    {{ product.description }}
+    <div class="row">
+        {{ product.description }}
+    </div>
 
-    {{ form_start(form) }}
-    {{ form_widget(form.quantity) }} ks
+    {{ form_start(form, {
+        'label': 'Přidání do košíku:','attr': {'class': 'form-inline'}
+    }) }}
+
+    <div class="form-group">
+        {{ form_widget(form.quantity) }} ks
+    </div>
+
     <button class="btn btn-danger" type="submit">Přidat do košíku</button>
     {{ form_end(form) }}
 

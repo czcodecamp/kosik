@@ -51,12 +51,12 @@ class ProductController
 
 		$form->handleRequest($request);
 		if ($form->isSubmitted() && $form->isValid()) {
-			$quantity = $form->get("quantity")->getData();
-
-			return RedirectResponse::create($this->router->generate("cart_add_item", [
+			$item = [
 				"id" => $product->getId(),
-				"quantity" => $quantity
-			]));
+				"quantity" => $form->get("quantity")->getData(),
+			];
+
+			return RedirectResponse::create($this->router->generate("cart_add_item", $item));
 		}
 
 		return [
