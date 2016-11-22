@@ -61,9 +61,10 @@ class CartItemFacade
 	/**
 	 * @param Cart $cart
 	 * @param Product $product
+	 * @param int $quantity
 	 * @return CartItem
 	 */
-	public function add(Cart $cart, Product $product) {
+	public function add(Cart $cart, Product $product, $quantity) {
 		$cartItem = $this->cartItemRepository->findOneBy([
 			"cart" => $cart,
 			"product" => $product,
@@ -76,7 +77,11 @@ class CartItemFacade
 			$cartItem->setCart($cart);
 		}
 
-		$quantity = $cartItem->getQuantity()+1;
+		if(!$quantity){
+			$quantity = 1;
+		}
+
+		$quantity = $cartItem->getQuantity()+$quantity;
 		$cartItem->setQuantity($quantity);
 		$this->save($cartItem);
 	}
