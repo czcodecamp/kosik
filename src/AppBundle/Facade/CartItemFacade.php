@@ -4,6 +4,7 @@ namespace AppBundle\Facade;
 
 use AppBundle\Entity\Cart;
 use AppBundle\Entity\CartItem;
+use AppBundle\Entity\Product;
 use AppBundle\FormType\VO\CartVO;
 use AppBundle\Repository\CartItemRepository;
 use Doctrine\ORM\EntityManager;
@@ -55,6 +56,29 @@ class CartItemFacade
 	 */
 	public function find($id) {
 		return $this->cartItemRepository->find($id);
+	}
+
+	/**
+	 * @param Cart $cart
+	 * @param Product $product
+	 * @return CartItem
+	 */
+	public function add(Cart $cart, Product $product) {
+		$cartItem = $this->cartItemRepository->findOneBy([
+			"cart" => $cart,
+			"product" => $product,
+		]);
+
+		if (!$cartItem) {
+			$cartItem = new CartItem();
+			$cartItem->setPricePerItem($product->getPrice());
+			$cartItem->setProduct($product);
+			$cartItem->setCart($cart);
+		}
+
+		$quantity = $cartItem->getQuantity()+1;
+		$cartItem->setQuantity($quantity);
+		$this->save($cartItem);
 	}
 
 	/**
