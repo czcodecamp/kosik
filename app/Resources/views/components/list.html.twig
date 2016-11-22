@@ -7,6 +7,7 @@
                     <h4 class="pull-right">{{ product.price }} Kč</h4>
                     </h4>
                     <p>{{ product.title }}</p>
+                    <a href="{{ path("cart_add_item", {"id": product.id }) }}" class="btn btn-danger">Přidat do košíku</a>
                 </div>
             </div>
             </a>

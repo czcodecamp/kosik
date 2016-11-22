@@ -65,6 +65,14 @@ class CartItemFacade
 		$this->entityManager->flush();
 	}
 
+	/**
+	 * @param CartItem $cartItem
+	 */
+	public function save(CartItem $cartItem) {
+		$this->entityManager->persist($cartItem);
+		$this->entityManager->flush($cartItem);
+	}
+
 	public function updateQuantities(CartVO $cartVO) {
 		$cartItemsVO = $cartVO->getCartItems();
 

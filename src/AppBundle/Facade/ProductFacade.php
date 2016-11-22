@@ -36,6 +36,14 @@ class ProductFacade {
 		]);
 	}
 
+	/**
+	 * @param int $id
+	 * @return Product|null
+	 */
+	public function find($id) {
+		return $this->productRepository->find($id);
+	}
+
 	public function getAll($limit, $offset) {
 		return $this->productRepository->findBy(
 			[],

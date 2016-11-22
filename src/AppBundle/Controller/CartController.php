@@ -2,7 +2,9 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Entity\CartItem;
 use AppBundle\Facade\CartFacade;
+use AppBundle\Facade\ProductFacade;
 use AppBundle\Facade\CartItemFacade;
 use AppBundle\Facade\UserFacade;
 use AppBundle\FormType\CartFormType;
@@ -29,6 +31,9 @@ class CartController
 	/** @var CartFacade */
 	private $cartFacade;
 
+	/** @var ProductFacade */
+	private $productFacade;
+
 	/** @var CartItemFacade */
 	private $cartItemFacade;
 
@@ -42,6 +47,7 @@ class CartController
 		UserFacade $userFacade,
 		CartFacade $cartFacade,
 		CartItemFacade $cartItemFacade,
+		ProductFacade $productFacade,
 		FormFactory $formFactory,
 		RouterInterface $router
 	) {
@@ -49,12 +55,13 @@ class CartController
 		$this->userFacade = $userFacade;
 		$this->cartFacade = $cartFacade;
 		$this->cartItemFacade = $cartItemFacade;
+		$this->productFacade = $productFacade;
 		$this->formFactory = $formFactory;
 		$this->router = $router;
 	}
 
 	/**
-	 * @Route("/kosik", name="cart_detail")
+	 * @Route("/kosik/", name="cart_detail")
 	 * @Template("cart/detail.html.twig")
 	 */
 	public function actionDetail(Request $request)
@@ -104,4 +111,30 @@ class CartController
 		return RedirectResponse::create($this->router->generate("cart_detail"));
 	}
 
+	/**
+	 * @Route("/kosik/add/{id}", name="cart_add_item", requirements={"id": "\d+"})
+	 */
+	public function actionAddItem($id)
+	{
+		$product = $this->productFacade->find($id);
+		if (!$product) {
+			throw new NotFoundHttpException("Produkt neexistuje");
+		}
+
+		$user = $this->userFacade->getUser();
+		$cart = $this->cartFacade->createIfNotExists($user);
+		$cartItem = $this->cartItemFacade->find($id);
+
+		if ($cartItem === null) {
+			$cartItem = new CartItem();
+			$cartItem->setCart($cart);
+			$cartItem->setPricePerItem($product->getPrice());
+			$cartItem->setProduct($product);
+			$cartItem->setQuantity(1);
+			$this->cartItemFacade->save($cartItem);
+		}
+
+
+		return RedirectResponse::create($this->router->generate("cart_detail"));
+	}
 }
