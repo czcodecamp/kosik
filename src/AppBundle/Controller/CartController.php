@@ -123,16 +123,8 @@ class CartController
 
 		$user = $this->userFacade->getUser();
 		$cart = $this->cartFacade->createIfNotExists($user);
-		$cartItem = $this->cartItemFacade->find($id);
 
-		if ($cartItem === null) {
-			$cartItem = new CartItem();
-			$cartItem->setCart($cart);
-			$cartItem->setPricePerItem($product->getPrice());
-			$cartItem->setProduct($product);
-			$cartItem->setQuantity(1);
-			$this->cartItemFacade->save($cartItem);
-		}
+		$this->cartItemFacade->add($cart, $product);
 
 
 		return RedirectResponse::create($this->router->generate("cart_detail"));
