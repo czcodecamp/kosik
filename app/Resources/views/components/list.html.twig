@@ -8,6 +8,7 @@
                     </h4>
                     <p>{{ product.title }}</p>
                     <strong>Skladem {{ stockCounts[product.id] }} kusů</strong>
+                    <a href="{{ path("cart_add_item", {"id": product.id }) }}" class="btn btn-danger">Přidat do košíku</a>
                 </div>
             </div>
             </a>
