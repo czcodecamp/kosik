@@ -1,6 +1,7 @@
 <?php
 namespace AppBundle\Entity;
 
+use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -40,8 +41,8 @@ class WarehouseProduct
 
 
 	/**
-	 * @var int
-	 * @ORM\Column(type="integer")
+	 * @var DateTime
+	 * @ORM\Column(type="datetime")
 	 */
 	private $expectedArrival;
 
@@ -90,7 +91,7 @@ class WarehouseProduct
 	}
 
 	/**
-	 * @return int
+	 * @return DateTime
 	 */
 	public function getExpectedArrival()
 	{
@@ -98,7 +99,7 @@ class WarehouseProduct
 	}
 
 	/**
-	 * @param int $expectedArrival
+	 * @param DateTime $expectedArrival
 	 * @return self
 	 */
 	public function setExpectedArrival($expectedArrival)
