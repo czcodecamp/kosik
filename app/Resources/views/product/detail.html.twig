@@ -22,4 +22,33 @@
     <button class="btn btn-danger" type="submit">Přidat do košíku</button>
     {{ form_end(form) }}
 
+    <h3></h3>
+    <div class="row">
+        <div class="col-md-2">
+            Pobočka
+        </div>
+        <div class="col-md-2">
+            Skladem
+        </div>
+        <div class="col-md-2">
+            Kdy zboží dostanu
+        </div>
+    </div>
+    {% for warehouseProduct in warehouseProducts %}
+        <div class="row">
+            <div class="col-md-2">
+                {{ warehouseProduct.warehouse.name }}
+            </div>
+            <div class="col-md-2">
+                {{ warehouseProduct.quantity }}
+            </div>
+            <div class="col-md-2">
+                {%if warehouseProduct.quantity > 0 %}
+                    Ihned
+                {% else %}
+                    {{ warehouseProduct.expectedArrival|date('d.m.Y') }}
+                {% endif %}
+            </div>
+        </div>
+    {% endfor %}
 {% endblock %}

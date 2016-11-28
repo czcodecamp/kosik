@@ -4,6 +4,7 @@ namespace AppBundle\Controller;
 
 use AppBundle\Facade\CategoryFacade;
 use AppBundle\Facade\ProductFacade;
+use AppBundle\Facade\WarehouseProductFacade;
 use AppBundle\Service\Paginator;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -18,14 +19,17 @@ class CategoryController
 {
 	private $categoryFacade;
 	private $productFacade;
+	private $warehouseProductFacade;
 
 	public function __construct(
 		CategoryFacade $categoryFacade,
-		ProductFacade $productFacade
+		ProductFacade $productFacade,
+		WarehouseProductFacade $warehouseProductFacade
 	) {
 
 		$this->categoryFacade = $categoryFacade;
 		$this->productFacade = $productFacade;
+		$this->warehouseProductFacade = $warehouseProductFacade;
 	}
 	/**
 	 * @Route("/vyber/{slug}/{page}", name="category_detail", requirements={"page": "\d+"}, defaults={"page": 1})
@@ -43,13 +47,17 @@ class CategoryController
 
 		$paginator = new Paginator($countByCategory, 6);
 		$paginator->setCurrentPage($page);
+		$products = $this->productFacade->findByCategory($category, $paginator->getLimit(), $paginator->getOffset());
+		$stockCounts = $this->warehouseProductFacade->getQuantityByProduct($products);
+
 		return [
-			"products" => $this->productFacade->findByCategory($category, $paginator->getLimit(), $paginator->getOffset()),
+			"products" => $products,
 			"categories" => $this->categoryFacade->getParentCategories($category),
 			"category" => $category,
 			"currentPage" => $page,
 			"totalPages" => $paginator->getTotalPageCount(),
 			"pageRange" => $paginator->getPageRange(5),
+			"stockCount" => $stockCounts,
 		];
 	}
 

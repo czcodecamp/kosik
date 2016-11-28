@@ -3,6 +3,7 @@ namespace AppBundle\Controller;
 use AppBundle\Facade\CategoryFacade;
 use AppBundle\Facade\ProductFacade;
 use AppBundle\Facade\UserFacade;
+use AppBundle\Facade\WarehouseProductFacade;
 use AppBundle\Service\Paginator;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -19,16 +20,19 @@ class HomepageController
 	private $productFacade;
 	private $categoryFacade;
 	private $userFacade;
+	private $warehouseProductFacade;
 
 	public function __construct(
 		ProductFacade $productFacade,
 		CategoryFacade $categoryFacade,
-		UserFacade $userFacade
+		UserFacade $userFacade,
+		WarehouseProductFacade $warehouseProductFacade
 	) {
 
 		$this->productFacade = $productFacade;
 		$this->categoryFacade = $categoryFacade;
 		$this->userFacade = $userFacade;
+		$this->warehouseProductFacade = $warehouseProductFacade;
 	}
 
 	/**
@@ -41,14 +45,17 @@ class HomepageController
 		$count = $this->productFacade->countAllProducts();
 		$paginator = new Paginator($count, 6);
 		$paginator->setCurrentPage($page);
+		$products = $this->productFacade->getAll($paginator->getLimit(), $paginator->getOffset());
+		$stockCounts = $this->warehouseProductFacade->getQuantityByProduct($products);
 
 		return [
-			"products" => $this->productFacade->getAll($paginator->getLimit(), $paginator->getOffset()),
+			"products" => $products,
 			"categories" => $this->categoryFacade->getTopLevelCategories(),
 			"currentPage" => $page,
 			"totalPages" => $paginator->getTotalPageCount(),
 			"pageRange" => $paginator->getPageRange(5),
 			"user" => $this->userFacade->getUser(),
+			"stockCounts" => $stockCounts
 		];
 	}
 
