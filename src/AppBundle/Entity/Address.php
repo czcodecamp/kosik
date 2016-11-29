@@ -64,24 +64,6 @@ class Address
 	private $phone;
 
 	/**
-	 * @var string
-	 * @ORM\Column(type="string")
-	 */
-	private $firm;
-
-	/**
-	 * @var string
-	 * @ORM\Column(type="string")
-	 */
-	private $in;
-
-	/**
-	 * @var string
-	 * @ORM\Column(type="string")
-	 */
-	private $vat;
-
-	/**
 	 * @return int
 	 */
 	public function getId()
@@ -222,62 +204,6 @@ class Address
 	public function setPhone($phone)
 	{
 		$this->phone = $phone;
-		return $this;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getFirm()
-	{
-		return $this->firm;
-	}
-
-	/**
-	 * @param string $firm
-	 * @return self
-	 */
-	public function setFirm($firm)
-	{
-		$this->firm = $firm;
-		return $this;
-	}
-
-
-	/**
-	 * @return string
-	 */
-	public function getIn()
-	{
-		return $this->in;
-	}
-
-	/**
-	 * @param string $in
-	 * @return self
-	 */
-	public function setIn($in)
-	{
-		$this->in = $in;
-		return $this;
-	}
-
-
-	/**
-	 * @return string
-	 */
-	public function getVat()
-	{
-		return $this->vat;
-	}
-
-	/**
-	 * @param string $vat
-	 * @return self
-	 */
-	public function setVat($vat)
-	{
-		$this->vat = $vat;
 		return $this;
 	}
 }

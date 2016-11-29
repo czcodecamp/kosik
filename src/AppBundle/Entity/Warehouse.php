@@ -9,6 +9,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @author Jan Klat <jenik@klatys.cz>
  *
  * @ORM\Entity
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\WarehouseRepository")
  */
 class Warehouse
 {

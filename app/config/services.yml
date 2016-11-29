@@ -60,6 +60,14 @@ services:
     class: AppBundle\Facade\OrderFacade
     autowire: true
 
+  app.facade.warehouse_facade:
+    class: AppBundle\Facade\WarehouseFacade
+    autowire: true
+
+  app.facade.address_facade:
+    class: AppBundle\Facade\AddressFacade
+    autowire: true
+
   app.repository.address_repository:
     class: AppBundle\Repository\AddressRepository
     factory:   ['@doctrine.orm.default_entity_manager', getRepository]
@@ -99,6 +107,11 @@ services:
     class: AppBundle\Repository\OrderRepository
     factory:   ['@doctrine.orm.default_entity_manager', getRepository]
     arguments: ['AppBundle\Entity\Order']
+
+  app.repository.warehouse_repository:
+    class: AppBundle\Repository\WarehouseRepository
+    factory:   ['@doctrine.orm.default_entity_manager', getRepository]
+    arguments: ['AppBundle\Entity\Warehouse']
 
   encoder:
     class: Symfony\Component\Security\Core\Encoder\BCryptPasswordEncoder

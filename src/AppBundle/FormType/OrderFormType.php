@@ -2,12 +2,9 @@
 namespace AppBundle\FormType;
 
 use AppBundle\Entity\Order;
-use AppBundle\FormType\AddressFormType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
@@ -19,27 +16,47 @@ class OrderFormType extends AbstractType
 
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
-		$builder->add(
-			$builder->create('delivery', AddressFormType::class, [
+		$builder
+			->add('deliveryType', ChoiceType::class, [
+				'label' => "Způsob dopravy",
+				'choices' => [
+					"Osobní odběr" => Order::DELIVERY_TYPE_SHOP,
+					"Česká pošta" => Order::DELIVERY_TYPE_POST,
+				],
+				"attr" => [
+					"class" => "form-control",
+				],
+			])
+			->add('warehouse', ChoiceType::class, [
+				'label' => "Pobočka",
+				'choices' => [
+					'Budějovická' => 2,
+					'Anděl' => 3,
+				],
+				"attr" => [
+					"class" => "form-control",
+				],
+			])
+			->add('paymentType', ChoiceType::class, [
+				'label' => "Způsob platby",
+				'choices' => [
+					"Kartou" => Order::PAYMENT_TYPE_CARD,
+					"Hotově" => Order::PAYMENT_TYPE_CASH,
+				],
+				"attr" => [
+					"class" => "form-control",
+				],
+			])
+			->add('delivery', AddressFormType::class, [
 				'label' => 'Dodací adresa:',
-			])
-		)->add('isInvoice', ChoiceType::class, array(
-			'choices'  => array(
-				'Yes' => true,
-				'No' => false,
-			),
-		))->add(
-			$builder->create('invoice', AddressFormType::class, [
-				'label' => 'Fakturační adresa:',
-			])
-		);
+				'required' => false
+			]);
 	}
 
-	public function setDefaultOptions(OptionsResolverInterface $resolver)
+	public function configureOptions(OptionsResolver $resolver)
 	{
-		$resolver->setDefaults([
-
-		]);
+		$resolver->setDefaults(array(
+			'data_class' => 'AppBundle\FormType\VO\OrderVO',
+		));
 	}
-
 }

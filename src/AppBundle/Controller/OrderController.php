@@ -4,7 +4,10 @@ namespace AppBundle\Controller;
 
 use AppBundle\Facade\OrderFacade;
 use AppBundle\Facade\UserFacade;
+use AppBundle\Facade\WarehouseFacade;
 use AppBundle\FormType\OrderFormType;
+use AppBundle\FormType\VO\AddressVO;
+use AppBundle\FormType\VO\OrderVO;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\Form\FormFactory;
@@ -25,6 +28,9 @@ class OrderController
 	/** @var OrderFacade */
 	private $orderFacade;
 
+	/** @var WarehouseFacade */
+	private $warehouseFacade;
+
 	/** @var RouterInterface */
 	private $router;
 
@@ -35,11 +41,13 @@ class OrderController
 		UserFacade $userFacade,
 		OrderFacade $orderFacade,
 		FormFactory $formFactory,
+		WarehouseFacade $warehouseFacade,
 		RouterInterface $router
 	) {
 		$this->userFacade = $userFacade;
 		$this->orderFacade = $orderFacade;
 		$this->formFactory = $formFactory;
+		$this->warehouseFacade = $warehouseFacade;
 		$this->router = $router;
 	}
 
@@ -49,17 +57,32 @@ class OrderController
 	 */
 	public function actionDetail(Request $request)
 	{
+		$orderVO = new OrderVO();
+		$orderVO->setDelivery(new AddressVO());
 
-
-		$form = $this->formFactory->create(OrderFormType::class, []);
+		$form = $this->formFactory->create(OrderFormType::class, $orderVO);
 
 		$form->handleRequest($request);
 		if ($form->isSubmitted() && $form->isValid()) {
-			return RedirectResponse::create($this->router->generate("cart_detail"));
+			$order = $this->orderFacade->create($orderVO);
+
+			return RedirectResponse::create($this->router->generate("order_thanks", ['id' => $order->getId()]));
 		}
 
 		return [
 			"form" => $form->createView(),
+			"user" => $this->userFacade->getUser(),
+		];
+	}
+
+	/**
+	 * @Route("/thanks/{id}", name="order_thanks")
+	 * @Template("order/thanks.html.twig")
+	 */
+	public function actionThanks($id)
+	{
+
+		return [
 			"user" => $this->userFacade->getUser(),
 		];
 	}
