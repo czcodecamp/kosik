@@ -5,6 +5,7 @@ use AppBundle\Facade\UserFacade;
 use AppBundle\FormType\AddressFormType;
 use AppBundle\FormType\RegistrationFormType;
 use AppBundle\FormType\UserSettingsFormType;
+use AppBundle\FormType\VO\AddressVO;
 use AppBundle\FormType\VO\UserSettingsVO;
 use Doctrine\ORM\EntityManager;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -130,21 +131,23 @@ class UserController
 		$user = $this->userFacade->getUser();
 
 		$editAddress = $this->userFacade->getUserAddress($user, $request->attributes->get("id"));
+		$addressVO = AddressVO::createFromAddress($editAddress);
 
 		if (!$user || !$editAddress) {
 			throw new UnauthorizedHttpException("Stránku nelze zobrazit");
 		}
 
-		$form = $this->formFactory->create(AddressFormType::class, $editAddress);
+		$form = $this->formFactory->create(AddressFormType::class, $addressVO);
 
 		$form->handleRequest($request);
 		if ($form->isSubmitted() && $form->isValid()) {
-			$this->userFacade->saveAddress($editAddress);
+			$this->userFacade->editAddress($editAddress, $addressVO);
 			return RedirectResponse::create($this->router->generate("user_settings"));
 		}
 
 		return [
 			"form" => $form->createView(),
+			"user" => $this->userFacade->getUser(),
 		];
 	}
 

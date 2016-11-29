@@ -164,7 +164,7 @@ class AddressVO
 			->setFirstName($address->getFirstName())
 			->setLastName($address->getLastName())
 			->setStreet($address->getStreet())
-			->setCity($address->getStreet())
+			->setCity($address->getCity())
 			->setPostCode($address->getPostCode())
 			->setPhone($address->getPhone());
 		return $addressVO;

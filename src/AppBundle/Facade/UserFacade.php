@@ -2,6 +2,7 @@
 namespace AppBundle\Facade;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\User;
+use AppBundle\FormType\VO\AddressVO;
 use AppBundle\FormType\VO\UserSettingsVO;
 use AppBundle\Repository\AddressRepository;
 use Doctrine\ORM\EntityManager;
@@ -89,6 +90,18 @@ class UserFacade
 
 		$this->entityManager->persist($user);
 		$this->entityManager->flush([$user]);
+	}
+
+	public function editAddress(Address $address, AddressVO $addressVO)
+	{
+		$address->setFirstName($addressVO->getFirstName());
+		$address->setLastName($addressVO->getLastName());
+		$address->setStreet($addressVO->getStreet());
+		$address->setCity($addressVO->getCity());
+		$address->setPostCode($addressVO->getPostCode());
+		$address->setPhone($addressVO->getPhone());
+
+		$this->saveAddress($address);
 	}
 
 	public function saveAddress(Address $address)
