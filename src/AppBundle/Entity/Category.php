@@ -41,6 +41,7 @@ class Category
 	/**
 	 * @var Category
 	 * @ORM\ManyToOne(targetEntity="Category")
+	 * @ORM\JoinColumn(name="parent_category_id", referencedColumnName="id", nullable=true)
 	 */
 	private $parentCategory;
 
@@ -142,7 +143,7 @@ class Category
 	 * @param Category $parentCategory
 	 * @return self
 	 */
-	public function setParentCategory(Category $parentCategory)
+	public function setParentCategory(Category $parentCategory = null)
 	{
 		$this->parentCategory = $parentCategory;
 		return $this;

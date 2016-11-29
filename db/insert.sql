@@ -1,46 +1,3 @@
-# ************************************************************
-# Sequel Pro SQL dump
-# Version 4541
-#
-# http://www.sequelpro.com/
-# https://github.com/sequelpro/sequelpro
-#
-# Host: 127.0.0.1 (MySQL 5.5.5-10.1.12-MariaDB)
-# Database: symfony
-# Generation Time: 2016-10-07 12:16:45 +0000
-# ************************************************************
-
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
-/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
-
-# Dump of table category
-# ------------------------------------------------------------
-
-DROP TABLE IF EXISTS `category`;
-
-CREATE TABLE `category` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `parent_category_id` int(11) NOT NULL,
-  `top_category_id` int(11) NOT NULL,
-  `title` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
-  `slug` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
-  `rank` int(11) NOT NULL,
-  `left` int(11) NOT NULL,
-  `right` int(11) NOT NULL,
-  `level` int(11) NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-
-LOCK TABLES `category` WRITE;
-/*!40000 ALTER TABLE `category` DISABLE KEYS */;
-
 INSERT INTO `category` (`id`, `parent_category_id`, `top_category_id`, `title`, `slug`, `rank`, `left`, `right`, `level`)
 VALUES
   (1,NULL,1,'Nábytek','nabytek',853,0,13,0),
@@ -61,29 +18,6 @@ VALUES
   (16,15,15,'Televize','televize',20,29,30,1),
   (17,15,15,'Hifi věže','hifi-veze',261,31,32,1),
   (18,15,15,'Blu-ray přehrávače','blu-ray-prehravace',245,33,34,1);
-
-/*!40000 ALTER TABLE `category` ENABLE KEYS */;
-UNLOCK TABLES;
-
-
-# Dump of table product
-# ------------------------------------------------------------
-
-DROP TABLE IF EXISTS `product`;
-
-CREATE TABLE `product` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `title` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
-  `image` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
-  `slug` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
-  `description` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
-  `price` double NOT NULL,
-  `rank` int(11) NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-
-LOCK TABLES `product` WRITE;
-/*!40000 ALTER TABLE `product` DISABLE KEYS */;
 
 INSERT INTO `product` (`id`, `title`, `image`, `slug`, `description`, `price`, `rank`)
 VALUES
@@ -132,24 +66,6 @@ VALUES
   (1687945,'Selfie tyč s bluetooth dálkovým ovládáním - dodání do 2 dnů','https://zrks.cz/storage/img/20160922/458x258_df459c940a0d4c043eef3cf0416ba7ed.jpg','selfie-tyc-s-bluetooth-dalkovym-ovladanim-dodani-do-2-dnu','',325,864),
   (1688572,'Mobilní telefon vždy při ruce: Barevná sportovní pouzdra zn. Free Knight','https://zrks.cz/storage/img/20161006/458x258_c4b4527950082a2cf32ea8a930dac454.jpg','mobilni-telefon-vzdy-pri-ruce-barevna-sportovni-pouzdra-zn-free-knight','',399,899);
 
-/*!40000 ALTER TABLE `product` ENABLE KEYS */;
-UNLOCK TABLES;
-
-
-# Dump of table product_category
-# ------------------------------------------------------------
-
-DROP TABLE IF EXISTS `product_category`;
-
-CREATE TABLE `product_category` (
-  `product_id` int(11) NOT NULL,
-  `category_id` int(11) NOT NULL,
-  PRIMARY KEY (`product_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-
-LOCK TABLES `product_category` WRITE;
-/*!40000 ALTER TABLE `product_category` DISABLE KEYS */;
-
 INSERT INTO `product_category` (`product_id`, `category_id`)
 VALUES
   (1245717,7),
@@ -196,18 +112,6 @@ VALUES
   (1687934,13),
   (1687945,13),
   (1688572,14);
-
-/*!40000 ALTER TABLE `product_category` ENABLE KEYS */;
-UNLOCK TABLES;
-
-
-
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 
 INSERT INTO codecamp.user (id, email, password, first_name, last_name, phone) VALUES (1, 'info@alza.cz', 'abcd
 ', 'Alza', 'Alza', '123456789');
