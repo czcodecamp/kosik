@@ -10,6 +10,7 @@ use AppBundle\FormType\VO\AddressVO;
 use AppBundle\FormType\VO\OrderVO;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormFactory;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -57,10 +58,24 @@ class OrderController
 	 */
 	public function actionDetail(Request $request)
 	{
+		$user = $this->userFacade->getUser();
+
+		$addresses = [];
+		foreach ($user->getAddresses() as $address) {
+			$addresses[$address->getDescription()] = $address->getId();
+		}
+
 		$orderVO = new OrderVO();
 		$orderVO->setDelivery(new AddressVO());
 
 		$form = $this->formFactory->create(OrderFormType::class, $orderVO);
+		$form->add('addressId', ChoiceType::class, [
+			'label' => "Adresa",
+			'choices' => $addresses + ['Jiná' => 0],
+			"attr" => [
+				"class" => "form-control",
+			],
+		]);
 
 		$form->handleRequest($request);
 		if ($form->isSubmitted() && $form->isValid()) {
@@ -71,7 +86,7 @@ class OrderController
 
 		return [
 			"form" => $form->createView(),
-			"user" => $this->userFacade->getUser(),
+			"user" => $user,
 		];
 	}
 

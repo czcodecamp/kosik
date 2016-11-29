@@ -22,7 +22,12 @@
         <div class="row">
             <div class="delivery post">
                 <div class="col-md-6">
-                    {{ form_row(form.delivery) }}
+                    {{ form_row(form.addressId) }}
+
+                    <br />
+                    <div class="other">
+                        {{ form_row(form.delivery) }}
+                    </div>
                 </div>
             </div>
         </div>
@@ -52,7 +57,16 @@
                     $(".delivery.store").hide();
                 }
             });
-            $('[name="order_form[deliveryType]"]').trigger('change')
+            $('[name="order_form[deliveryType]"]').trigger('change');
+            $('[name="order_form[addressId]"]').on('change', function () {
+                var addressId = $(this).val();
+                if (addressId === "0") {
+                    $(".other").show();
+                } else {
+                    $(".other").hide();
+                }
+            });
+            $('[name="order_form[addressId]"]').trigger('change');
         });
     </script>
 {% endblock %}

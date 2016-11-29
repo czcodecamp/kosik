@@ -20,6 +20,11 @@ class OrderVO
 	private $warehouse;
 
 	/**
+	 * @var int
+	 */
+	private $addressId;
+
+	/**
 	 * @var AddressVO
 	 */
 	private $invoice;
@@ -75,6 +80,24 @@ class OrderVO
 	public function setWarehouse(int $warehouse)
 	{
 		$this->warehouse = $warehouse;
+	}
+
+	/**
+	 * @return int
+	 */
+	public function getAddressId()
+	{
+		return $this->addressId;
+	}
+
+	/**
+	 * @param int $addressId
+	 * @return OrderVO
+	 */
+	public function setAddressId(int $addressId): OrderVO
+	{
+		$this->addressId = $addressId;
+		return $this;
 	}
 
 	/**

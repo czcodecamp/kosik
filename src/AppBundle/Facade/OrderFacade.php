@@ -2,9 +2,11 @@
 
 namespace AppBundle\Facade;
 use AppBundle\Entity\Address;
+use AppBundle\Entity\Cart;
 use AppBundle\Entity\Order;
 use AppBundle\Entity\User;
 use AppBundle\FormType\VO\OrderVO;
+use AppBundle\Repository\AddressRepository;
 use AppBundle\Repository\OrderRepository;
 use AppBundle\Repository\WarehouseRepository;
 use Doctrine\ORM\EntityManager;
@@ -33,13 +35,17 @@ class OrderFacade {
 	/** @var CartFacade */
 	private $cartFacade;
 
+	/** @var AddressRepository */
+	private $addressRepository;
+
 	public function __construct(
 		EntityManager $entityManager,
 		OrderRepository $orderRepository,
 		AddressFacade $addressFacade,
 		WarehouseRepository $warehouseRepository,
 		UserFacade $userFacade,
-		CartFacade $cartFacade
+		CartFacade $cartFacade,
+		AddressRepository $addressRepository
 	) {
 		$this->entityManager = $entityManager;
 		$this->orderRepository = $orderRepository;
@@ -47,6 +53,7 @@ class OrderFacade {
 		$this->warehouseRepository = $warehouseRepository;
 		$this->userFacade = $userFacade;
 		$this->cartFacade = $cartFacade;
+		$this->addressRepository = $addressRepository;
 	}
 
 	public function createIfNotExists(User $user)
@@ -69,9 +76,11 @@ class OrderFacade {
 	public function create(OrderVO $orderVO)
 	{
 		$user = $this->userFacade->getUser();
+		$cart = $this->cartFacade->getByUser($user);
+		$cart->setStatus(Cart::STATUS_ORDERED);
 
 		$order = new Order();
-		$order->setCart($this->cartFacade->getByUser($user));
+		$order->setCart($cart);
 		$order->setUser($user);
 		$order->setDeliveryType($orderVO->getDeliveryType());
 		$order->setPaymentType($orderVO->getPaymentType());
@@ -81,21 +90,35 @@ class OrderFacade {
 
 			$order->setDeliveryWarehouse($warehouse);
 		} else {
-			$addressVO = $orderVO->getDelivery();
+			if ($orderVO->getAddressId() === 0) {
+				$addressVO = $orderVO->getDelivery();
 
-			$address = new Address();
-			$address->setFirstName($addressVO->getFirstName());
-			$address->setLastName($addressVO->getLastName());
-			$address->setStreet($addressVO->getStreet());
-			$address->setCity($addressVO->getCity());
-			$address->setPostCode($addressVO->getPostCode());
-			$address->setPhone($addressVO->getPhone());
+				$address = new Address();
+				$address->setUser($user);
+				$address->setFirstName($addressVO->getFirstName());
+				$address->setLastName($addressVO->getLastName());
+				$address->setStreet($addressVO->getStreet());
+				$address->setCity($addressVO->getCity());
+				$address->setPostCode($addressVO->getPostCode());
+				$address->setPhone($addressVO->getPhone());
 
+				$order->setDeliveryAddress($address);
+			} else {
+				$address = $this->addressRepository->find($orderVO->getAddressId());
 
-			$this->addressFacade->save($address);
-
-			$order->setDeliveryAddress($address);
+				$order->setDeliveryAddress($address);
+			}
 		}
+
+		if ($order->getDeliveryAddress() !== null) {
+			$this->entityManager->persist($order->getDeliveryAddress());
+			$this->entityManager->flush($order->getDeliveryAddress());
+		}
+
+		$this->entityManager->persist($order);
+		$this->entityManager->flush($order);
+
+		$this->entityManager->flush($cart);
 
 		$this->save($order);
 

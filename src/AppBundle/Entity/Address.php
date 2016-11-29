@@ -206,4 +206,9 @@ class Address
 		$this->phone = $phone;
 		return $this;
 	}
+
+	public function getDescription()
+	{
+		return $this->getFirstName() . " " . $this->getLastName() . ", " . $this->getStreet() . ", " . $this->getCity();
+	}
 }
