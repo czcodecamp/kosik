@@ -57,7 +57,7 @@ class CategoryController
 			"currentPage" => $page,
 			"totalPages" => $paginator->getTotalPageCount(),
 			"pageRange" => $paginator->getPageRange(5),
-			"stockCount" => $stockCounts,
+			"stockCounts" => $stockCounts,
 		];
 	}
 
