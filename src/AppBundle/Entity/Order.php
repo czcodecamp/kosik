@@ -8,11 +8,16 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @author Vašek Boch <vasek.boch@live.com>
  * @author Jan Klat <jenik@klatys.cz>
  *
- * @ORM\Entity
+ * @ORM\Table(name="`order`")
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\OrderRepository")
  */
 class Order
 {
+	const DELIVERY_TYPE_SHOP = 'shop';
+	const DELIVERY_TYPE_POST = 'post';
 
+	const PAYMENT_TYPE_CASH = 'cash';
+	const PAYMENT_TYPE_CARD = 'card';
 	/**
 	 * @var int
 	 * @ORM\Id
@@ -38,19 +43,35 @@ class Order
 	/**
 	 * @var Address
 	 * @ORM\ManyToOne(targetEntity="Address")
+	 * @ORM\JoinColumn(name="delivery_address_id", referencedColumnName="id", nullable=true)
 	 */
 	private $deliveryAddress;
 
 	/**
 	 * @var Address
 	 * @ORM\ManyToOne(targetEntity="Address")
+	 * @ORM\JoinColumn(name="invoice_address_id", referencedColumnName="id", nullable=true)
 	 */
 	private $invoiceAddress;
 
 	/**
 	 * @var string
+	 * @ORM\Column(name="payment_type")
 	 */
 	private $paymentType;
+
+	/**
+	 * @var string
+	 * @ORM\Column(name="delivery_type")
+	 */
+	private $deliveryType;
+
+	/**
+	 * @var Warehouse
+	 * @ORM\ManyToOne(targetEntity="Warehouse")
+	 * @ORM\JoinColumn(name="delivery_warehouse_id", referencedColumnName="id", nullable=true)
+	 */
+	private $deliveryWarehouse;
 
 	/**
 	 * @var Sale
@@ -63,12 +84,6 @@ class Order
 	 * @ORM\Column(name="created", type="datetime", nullable=false)
 	 */
 	private $created;
-
-	/**
-	 * @var string
-	 * @ORM\Column(name="ipAddress", type="string", nullable=false)
-	 */
-	private $ipAddress;
 
 	public function __construct()
 	{
@@ -108,6 +123,24 @@ class Order
 	public function setPaymentType($paymentType)
 	{
 		$this->paymentType = $paymentType;
+		return $this;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getDeliveryType()
+	{
+		return $this->deliveryType;
+	}
+
+	/**
+	 * @param string $deliveryType
+	 * @return self
+	 */
+	public function setDeliveryType($deliveryType)
+	{
+		$this->deliveryType = $deliveryType;
 		return $this;
 	}
 
@@ -199,6 +232,25 @@ class Order
 	{
 		$this->invoiceAddress = $invoiceAddress;
 		return $this;
+	}
+
+	/**
+	 * @param Warehouse $deliveryWarehouse
+	 * @return Order
+	 */
+	public function setDeliveryWarehouse(Warehouse $deliveryWarehouse): Order
+	{
+		$this->deliveryWarehouse = $deliveryWarehouse;
+
+		return $this;
+	}
+
+	/**
+	 * @return Warehouse
+	 */
+	public function getDeliveryWarehouse()
+	{
+		return $this->deliveryWarehouse;
 	}
 
 	/**

@@ -28,6 +28,10 @@ services:
     class: AppBundle\Controller\CartController
     autowire: true
 
+  app.controller.order_controller:
+    class: AppBundle\Controller\OrderController
+    autowire: true
+
   app.facade.category_facade:
     class: AppBundle\Facade\CategoryFacade
     autowire: true
@@ -50,6 +54,18 @@ services:
 
   app.facade.warehouse_product_facade:
     class: AppBundle\Facade\WarehouseProductFacade
+    autowire: true
+
+  app.facade.order_facade:
+    class: AppBundle\Facade\OrderFacade
+    autowire: true
+
+  app.facade.warehouse_facade:
+    class: AppBundle\Facade\WarehouseFacade
+    autowire: true
+
+  app.facade.address_facade:
+    class: AppBundle\Facade\AddressFacade
     autowire: true
 
   app.repository.address_repository:
@@ -86,6 +102,16 @@ services:
     class: AppBundle\Repository\WarehouseProductRepository
     factory:   ['@doctrine.orm.default_entity_manager', getRepository]
     arguments: ['AppBundle\Entity\WarehouseProduct']
+
+  app.repository.order_repository:
+    class: AppBundle\Repository\OrderRepository
+    factory:   ['@doctrine.orm.default_entity_manager', getRepository]
+    arguments: ['AppBundle\Entity\Order']
+
+  app.repository.warehouse_repository:
+    class: AppBundle\Repository\WarehouseRepository
+    factory:   ['@doctrine.orm.default_entity_manager', getRepository]
+    arguments: ['AppBundle\Entity\Warehouse']
 
   encoder:
     class: Symfony\Component\Security\Core\Encoder\BCryptPasswordEncoder

@@ -4,6 +4,7 @@ namespace AppBundle\Facade;
 
 use AppBundle\Entity\Cart;
 use AppBundle\Entity\CartItem;
+use AppBundle\Entity\Product;
 use AppBundle\FormType\VO\CartVO;
 use AppBundle\Repository\CartItemRepository;
 use Doctrine\ORM\EntityManager;
@@ -58,11 +59,47 @@ class CartItemFacade
 	}
 
 	/**
+	 * @param Cart $cart
+	 * @param Product $product
+	 * @param int $quantity
+	 * @return CartItem
+	 */
+	public function add(Cart $cart, Product $product, $quantity) {
+		$cartItem = $this->cartItemRepository->findOneBy([
+			"cart" => $cart,
+			"product" => $product,
+		]);
+
+		if (!$cartItem) {
+			$cartItem = new CartItem();
+			$cartItem->setPricePerItem($product->getPrice());
+			$cartItem->setProduct($product);
+			$cartItem->setCart($cart);
+		}
+
+		if(!$quantity){
+			$quantity = 1;
+		}
+
+		$quantity = $cartItem->getQuantity()+$quantity;
+		$cartItem->setQuantity($quantity);
+		$this->save($cartItem);
+	}
+
+	/**
 	 * @param CartItem $cartItem
 	 */
 	public function remove(CartItem $cartItem) {
 		$this->entityManager->remove($cartItem);
 		$this->entityManager->flush();
+	}
+
+	/**
+	 * @param CartItem $cartItem
+	 */
+	public function save(CartItem $cartItem) {
+		$this->entityManager->persist($cartItem);
+		$this->entityManager->flush($cartItem);
 	}
 
 	public function updateQuantities(CartVO $cartVO) {

@@ -63,6 +63,7 @@ class User implements UserInterface
 	/**
 	 * @var Address[]
 	 * @ORM\OneToMany(targetEntity="Address", mappedBy="user")
+	 * @ORM\JoinColumn(name="address_id", referencedColumnName="id", nullable=true)
 	 */
 	private $addresses;
 

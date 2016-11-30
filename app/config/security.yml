@@ -27,3 +27,5 @@ security:
                 target: homepage
     access_control:
         - { path: ^/kosik, roles: IS_AUTHENTICATED_FULLY }
+        - { path: ^/objednavka, roles: IS_AUTHENTICATED_FULLY }
+        - { path: ^/thanks, roles: IS_AUTHENTICATED_FULLY }

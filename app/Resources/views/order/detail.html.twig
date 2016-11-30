@@ -1,0 +1,73 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>Objednávka</h1>
+
+    {{ form_start(form) }}
+        <div class="row">
+            <div class="col-md-6">
+                {{ form_row(form.deliveryType) }}
+
+                <br />
+                <div class="delivery store">
+                    {{ form_row(form.warehouse) }}
+                </div>
+            </div>
+            <div class="col-md-6">
+                {{ form_row(form.paymentType) }}
+            </div>
+        </div>
+
+        <br />
+        <div class="row">
+            <div class="delivery post">
+                <div class="col-md-6">
+                    {{ form_row(form.addressId) }}
+
+                    <br />
+                    <div class="other">
+                        {{ form_row(form.delivery) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <br>
+        <div class="row">
+            <div class="col-md-6 col-md-offset-6">
+                <a href="{{ path("cart_detail") }}" class="btn btn-primary">Zpět do košíku</a>
+                <button class="btn btn-success" type="submit">Potvrdit adresu</button>
+            </div>
+        </div>
+
+    {{ form_end(form) }}
+
+{% endblock %}
+
+{% block script %}
+    <script>
+        $(function () {
+            $('[name="order_form[deliveryType]"]').on('change', function () {
+                var deliveryType = $(this).val();
+                if (deliveryType === "shop") {
+                    $(".delivery.post").hide();
+                    $(".delivery.store").show();
+                } else {
+                    $(".delivery.post").show();
+                    $(".delivery.store").hide();
+                }
+            });
+            $('[name="order_form[deliveryType]"]').trigger('change');
+            $('[name="order_form[addressId]"]').on('change', function () {
+                var addressId = $(this).val();
+                if (addressId === "0") {
+                    $(".other").show();
+                } else {
+                    $(".other").hide();
+                }
+            });
+            $('[name="order_form[addressId]"]').trigger('change');
+        });
+    </script>
+{% endblock %}
+

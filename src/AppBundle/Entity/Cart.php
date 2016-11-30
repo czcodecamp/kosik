@@ -11,6 +11,8 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Cart
 {
+	const STATUS_NEW = "new";
+	const STATUS_ORDERED = "ordered";
 
 	/**
 	 * @var int
@@ -25,6 +27,12 @@ class Cart
 	 * @ORM\ManyToOne(targetEntity="User")
 	 */
 	private $user;
+
+	/**
+	 * @var string
+	 * @ORM\Column(name="status")
+	 */
+	private $status = self::STATUS_NEW;
 
 	/**
 	 * @return int
@@ -49,6 +57,24 @@ class Cart
 	public function setUser($user)
 	{
 		$this->user = $user;
+		return $this;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getStatus(): string
+	{
+		return $this->status;
+	}
+
+	/**
+	 * @param string $status
+	 * @return Cart
+	 */
+	public function setStatus(string $status): Cart
+	{
+		$this->status = $status;
 		return $this;
 	}
 }

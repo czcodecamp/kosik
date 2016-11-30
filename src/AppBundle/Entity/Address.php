@@ -23,6 +23,7 @@ class Address
 	/**
 	 * @var User
 	 * @ORM\ManyToOne(targetEntity="User")
+	 * @ORM\JoinColumn(name="user_id", referencedColumnName="id", nullable=true)
 	 */
 	private $user;
 
@@ -206,4 +207,8 @@ class Address
 		return $this;
 	}
 
+	public function getDescription()
+	{
+		return $this->getFirstName() . " " . $this->getLastName() . ", " . $this->getStreet() . ", " . $this->getCity();
+	}
 }

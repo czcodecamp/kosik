@@ -5,12 +5,14 @@ use AppBundle\Entity\Cart;
 use AppBundle\Entity\User;
 use AppBundle\Repository\CartRepository;
 use Doctrine\ORM\EntityManager;
+use Sluggable\Fixture\Inheritance2\Car;
 
 /**
  * @author Vašek Boch <vasek.boch@live.com>
  * @author Jan Klat <jenik@klatys.cz>
  */
-class CartFacade {
+class
+CartFacade {
 
 	/** @var CartRepository */
 	private $cartRepository;
@@ -44,6 +46,7 @@ class CartFacade {
 	public function getByUser(User $user) {
 		return $this->cartRepository->findOneBy([
 			"user" => $user,
+			"status" => Cart::STATUS_NEW,
 		]);
 	}
 
