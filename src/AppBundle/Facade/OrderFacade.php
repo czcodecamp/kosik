@@ -10,6 +10,8 @@ use AppBundle\Repository\AddressRepository;
 use AppBundle\Repository\OrderRepository;
 use AppBundle\Repository\WarehouseRepository;
 use Doctrine\ORM\EntityManager;
+use Swift_Message;
+use Swift_Mailer;
 
 /**
  * @author Vašek Boch <vasek.boch@live.com>
@@ -38,6 +40,12 @@ class OrderFacade {
 	/** @var AddressRepository */
 	private $addressRepository;
 
+	/** @var CartItemFacade */
+	private $cartItemFacade;
+
+	/** @var  Swift_Mailer */
+	private $swiftMailer;
+
 	public function __construct(
 		EntityManager $entityManager,
 		OrderRepository $orderRepository,
@@ -45,7 +53,9 @@ class OrderFacade {
 		WarehouseRepository $warehouseRepository,
 		UserFacade $userFacade,
 		CartFacade $cartFacade,
-		AddressRepository $addressRepository
+		AddressRepository $addressRepository,
+		CartItemFacade $cartItemFacade,
+		Swift_Mailer $swiftMailer
 	) {
 		$this->entityManager = $entityManager;
 		$this->orderRepository = $orderRepository;
@@ -54,6 +64,8 @@ class OrderFacade {
 		$this->userFacade = $userFacade;
 		$this->cartFacade = $cartFacade;
 		$this->addressRepository = $addressRepository;
+		$this->cartItemFacade = $cartItemFacade;
+		$this->swiftMailer = $swiftMailer;
 	}
 
 	public function createIfNotExists(User $user)
@@ -77,7 +89,7 @@ class OrderFacade {
 	{
 		$user = $this->userFacade->getUser();
 		$cart = $this->cartFacade->getByUser($user);
-		$cart->setStatus(Cart::STATUS_ORDERED);
+		//$cart->setStatus(Cart::STATUS_ORDERED);
 
 		$order = new Order();
 		$order->setCart($cart);
@@ -123,6 +135,38 @@ class OrderFacade {
 		$this->save($order);
 
 		return $order;
+	}
+
+	public function sendOrderEmail($order)
+	{
+		$cart = $order->getCart();
+		$subject = "CodeCamp - Nová objednávka č.: " . $order->getId();
+		$from = 'kosik@codecamp.cz';
+		$to = $order->getUser()->getEmail();
+
+		$text = "Děkujeme, přijali jsme Vaši objednávku číslo: "
+			. $order->getId()
+			. "\n\r";
+		$text .= " Objednali jste: ". "\n\r";
+
+		$cartItems = $this->cartItemFacade->findByCart($cart);
+		foreach($cartItems as $item){
+			$text .= " - ".$item->getProduct()->getTitle();
+			$text .= " ( ". $item->getQuantity() ." ks";
+			$text .= " - ". number_format($item->getPricePerItem(),0,","," ") .",- Kč )";
+			$text .= "\n\r";
+		}
+
+		$totalPrice = $this->cartItemFacade->getTotalPrice($cartItems);
+		$text .= "Celková cena je: " . number_format($totalPrice,0,","," ") . ",- Kč";
+
+		$message = Swift_Message::newInstance()
+			->setSubject($subject)
+			->setFrom($from)
+			->setTo($to)
+			->setBody($text);
+
+		$this->swiftMailer->send($message);
 	}
 
 	/**
