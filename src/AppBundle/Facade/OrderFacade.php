@@ -89,7 +89,7 @@ class OrderFacade {
 	{
 		$user = $this->userFacade->getUser();
 		$cart = $this->cartFacade->getByUser($user);
-		//$cart->setStatus(Cart::STATUS_ORDERED);
+		$cart->setStatus(Cart::STATUS_ORDERED);
 
 		$order = new Order();
 		$order->setCart($cart);
