@@ -40,8 +40,8 @@ class OrderFormType extends AbstractType
 			->add('paymentType', ChoiceType::class, [
 				'label' => "Způsob platby",
 				'choices' => [
-					"Kartou" => Order::PAYMENT_TYPE_CARD,
 					"Hotově" => Order::PAYMENT_TYPE_CASH,
+					"Kartou" => Order::PAYMENT_TYPE_CARD,
 				],
 				"attr" => [
 					"class" => "form-control",
