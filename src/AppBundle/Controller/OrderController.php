@@ -1,6 +1,7 @@
 <?php
 namespace AppBundle\Controller;
 
+use AppBundle\Facade\CartFacade;
 use AppBundle\Facade\CartItemFacade;
 use AppBundle\Service\Cart;
 use AppBundle\Facade\OrderFacade;
@@ -42,13 +43,21 @@ class OrderController
 	/** @var Cart */
 	private $cartService;
 
+	/** @var CartFacade */
+	private $cartFacade;
+
+	/** @var CartItemFacade */
+	private $cartItemFacade;
+
 	public function __construct(
 		UserFacade $userFacade,
 		OrderFacade $orderFacade,
 		FormFactory $formFactory,
 		WarehouseFacade $warehouseFacade,
 		RouterInterface $router,
-		Cart $cartService
+		Cart $cartService,
+		CartFacade $cartFacade,
+		CartItemFacade $cartItemFacade
 	) {
 		$this->userFacade = $userFacade;
 		$this->orderFacade = $orderFacade;
@@ -56,6 +65,8 @@ class OrderController
 		$this->warehouseFacade = $warehouseFacade;
 		$this->router = $router;
 		$this->cartService = $cartService;
+		$this->cartFacade = $cartFacade;
+		$this->cartItemFacade = $cartItemFacade;
 	}
 
 	/**
@@ -65,6 +76,11 @@ class OrderController
 	public function actionDetail(Request $request)
 	{
 		$user = $this->userFacade->getUser();
+		$cart = $this->cartFacade->createIfNotExists($user);
+		$cartItems = $this->cartItemFacade->findByCart($cart);
+		if(!count($cartItems)){
+			return RedirectResponse::create($this->router->generate("cart_detail"));
+		}
 
 		$addresses = [];
 		foreach ($user->getAddresses() as $address) {
