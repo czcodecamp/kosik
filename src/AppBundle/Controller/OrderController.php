@@ -16,8 +16,6 @@ use Symfony\Component\Form\FormFactory;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\RouterInterface;
-use Swift_Message;
-use Swift_Mailer;
 
 /**
  * @author Vašek Boch <vasek.boch@live.com>
@@ -26,9 +24,6 @@ use Swift_Mailer;
  */
 class OrderController
 {
-	/** @var CartItemFacade */
-	private $cartItemFacade;
-
 	/** @var UserFacade */
 	private $userFacade;
 
@@ -47,17 +42,13 @@ class OrderController
 	/** @var Cart */
 	private $cartService;
 
-	/** @var  Swift_Mailer */
-	private $swiftMailer;
-
 	public function __construct(
 		UserFacade $userFacade,
 		OrderFacade $orderFacade,
 		FormFactory $formFactory,
 		WarehouseFacade $warehouseFacade,
 		RouterInterface $router,
-		Cart $cartService,
-		Swift_Mailer $swiftMailer
+		Cart $cartService
 	) {
 		$this->userFacade = $userFacade;
 		$this->orderFacade = $orderFacade;
@@ -65,7 +56,6 @@ class OrderController
 		$this->warehouseFacade = $warehouseFacade;
 		$this->router = $router;
 		$this->cartService = $cartService;
-		$this->swiftMailer = $swiftMailer;
 	}
 
 	/**
@@ -97,27 +87,7 @@ class OrderController
 		if ($form->isSubmitted() && $form->isValid()) {
 			$order = $this->orderFacade->create($orderVO);
 
-			$cart = $order->getCart();
-			$cartItems = $this->cartItemFacade->findByCart($cart);
-			$totalPrice = $this->cartItemFacade->getTotalPrice($cartItems);
-
-			$subject = "Nová objednávka " . $order->getId();
-			$from = 'kosik@codecamp.cz';
-			$to = $user->getEmail();
-			$text = "Přijali jsme vaši objednávku číslo "
-				. $order->getId()
-				//." na produkt "
-				//. $order->getItem()->getName()
-				." celková cena je "
-				. $totalPrice;
-
-			$message = Swift_Message::newInstance()
-				->setSubject($subject)
-				->setFrom($from)
-				->setTo($to)
-				->setBody($text);
-
-			$this->swiftMailer->send($message);
+			$this->orderFacade->sendOrderEmail($order);
 
 			return RedirectResponse::create($this->router->generate("order_thanks", ['id' => $order->getId()]));
 		}
