@@ -15,6 +15,8 @@ use Symfony\Component\Form\FormFactory;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\RouterInterface;
+use Swift_Message;
+use Swift_Mailer;
 
 /**
  * @author Vašek Boch <vasek.boch@live.com>
