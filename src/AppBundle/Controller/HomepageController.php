@@ -1,5 +1,7 @@
 <?php
 namespace AppBundle\Controller;
+
+use AppBundle\Service\Cart;
 use AppBundle\Facade\CategoryFacade;
 use AppBundle\Facade\ProductFacade;
 use AppBundle\Facade\UserFacade;
@@ -22,17 +24,22 @@ class HomepageController
 	private $userFacade;
 	private $warehouseProductFacade;
 
+	/** @var Cart */
+	private $cartService;
+
 	public function __construct(
 		ProductFacade $productFacade,
 		CategoryFacade $categoryFacade,
 		UserFacade $userFacade,
-		WarehouseProductFacade $warehouseProductFacade
+		WarehouseProductFacade $warehouseProductFacade,
+		Cart $cartService
 	) {
 
 		$this->productFacade = $productFacade;
 		$this->categoryFacade = $categoryFacade;
 		$this->userFacade = $userFacade;
 		$this->warehouseProductFacade = $warehouseProductFacade;
+		$this->cartService = $cartService;
 	}
 
 	/**
@@ -48,7 +55,7 @@ class HomepageController
 		$products = $this->productFacade->getAll($paginator->getLimit(), $paginator->getOffset());
 		$stockCounts = $this->warehouseProductFacade->getQuantityByProduct($products);
 
-		return [
+		$template = [
 			"products" => $products,
 			"categories" => $this->categoryFacade->getTopLevelCategories(),
 			"currentPage" => $page,
@@ -57,6 +64,10 @@ class HomepageController
 			"user" => $this->userFacade->getUser(),
 			"stockCounts" => $stockCounts
 		];
+
+		$template = $this->cartService->create($template);
+
+		return $template;
 	}
 
 }

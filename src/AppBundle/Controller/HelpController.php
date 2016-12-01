@@ -1,5 +1,7 @@
 <?php
 namespace AppBundle\Controller;
+
+use AppBundle\Service\Cart;
 use AppBundle\Entity\SupportTicket;
 use AppBundle\Facade\HelpFacade;
 use AppBundle\Facade\UserFacade;
@@ -22,16 +24,21 @@ class HelpController
 	private $helpFacade;
 	private $userFacade;
 
+	/** @var Cart */
+	private $cartService;
+
 	public function __construct(
 		FaqRepository $faqRepository,
 		FormFactory $formFactory,
 		HelpFacade $helpFacade,
-		UserFacade $userFacade
+		UserFacade $userFacade,
+		Cart $cartService
 	) {
 		$this->faqRepository = $faqRepository;
 		$this->formFactory = $formFactory;
 		$this->helpFacade = $helpFacade;
 		$this->userFacade = $userFacade;
+		$this->cartService = $cartService;
 	}
 
 	/**
@@ -42,9 +49,13 @@ class HelpController
 	 */
 	public function faqAction()
 	{
-		return [
+		$template = [
 			"faqs" => $this->faqRepository->findAll(),
 		];
+
+		$template = $this->cartService->create($template);
+
+		return $template;
 	}
 
 	/**
@@ -68,10 +79,14 @@ class HelpController
 			$this->helpFacade->saveSupportTicket($ticket);
 			$saved = true;
 		}
-		return [
+		$template = [
 			"saved" => $saved,
 			"form" => $form->createView(),
 		];
+
+		$template = $this->cartService->create($template);
+
+		return $template;
 	}
 
 }

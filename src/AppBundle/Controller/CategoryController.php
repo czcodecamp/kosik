@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Service\Cart;
 use AppBundle\Facade\CategoryFacade;
 use AppBundle\Facade\ProductFacade;
 use AppBundle\Facade\WarehouseProductFacade;
@@ -21,15 +22,20 @@ class CategoryController
 	private $productFacade;
 	private $warehouseProductFacade;
 
+	/** @var Cart */
+	private $cartService;
+
 	public function __construct(
 		CategoryFacade $categoryFacade,
 		ProductFacade $productFacade,
-		WarehouseProductFacade $warehouseProductFacade
+		WarehouseProductFacade $warehouseProductFacade,
+		Cart $cartService
 	) {
 
 		$this->categoryFacade = $categoryFacade;
 		$this->productFacade = $productFacade;
 		$this->warehouseProductFacade = $warehouseProductFacade;
+		$this->cartService = $cartService;
 	}
 	/**
 	 * @Route("/vyber/{slug}/{page}", name="category_detail", requirements={"page": "\d+"}, defaults={"page": 1})
@@ -50,7 +56,7 @@ class CategoryController
 		$products = $this->productFacade->findByCategory($category, $paginator->getLimit(), $paginator->getOffset());
 		$stockCounts = $this->warehouseProductFacade->getQuantityByProduct($products);
 
-		return [
+		$template = [
 			"products" => $products,
 			"categories" => $this->categoryFacade->getParentCategories($category),
 			"category" => $category,
@@ -59,6 +65,10 @@ class CategoryController
 			"pageRange" => $paginator->getPageRange(5),
 			"stockCounts" => $stockCounts,
 		];
+
+		$template = $this->cartService->create($template);
+
+		return $template;
 	}
 
 }

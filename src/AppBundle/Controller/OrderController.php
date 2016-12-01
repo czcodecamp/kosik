@@ -1,7 +1,7 @@
 <?php
-
 namespace AppBundle\Controller;
 
+use AppBundle\Service\Cart;
 use AppBundle\Facade\OrderFacade;
 use AppBundle\Facade\UserFacade;
 use AppBundle\Facade\WarehouseFacade;
@@ -38,18 +38,23 @@ class OrderController
 	/** @var FormFactory */
 	private $formFactory;
 
+	/** @var Cart */
+	private $cartService;
+
 	public function __construct(
 		UserFacade $userFacade,
 		OrderFacade $orderFacade,
 		FormFactory $formFactory,
 		WarehouseFacade $warehouseFacade,
-		RouterInterface $router
+		RouterInterface $router,
+		Cart $cartService
 	) {
 		$this->userFacade = $userFacade;
 		$this->orderFacade = $orderFacade;
 		$this->formFactory = $formFactory;
 		$this->warehouseFacade = $warehouseFacade;
 		$this->router = $router;
+		$this->cartService = $cartService;
 	}
 
 	/**
@@ -84,10 +89,14 @@ class OrderController
 			return RedirectResponse::create($this->router->generate("order_thanks", ['id' => $order->getId()]));
 		}
 
-		return [
+		$template = [
 			"form" => $form->createView(),
 			"user" => $user,
 		];
+
+		$template = $this->cartService->create($template);
+
+		return $template;
 	}
 
 	/**
@@ -97,9 +106,13 @@ class OrderController
 	public function actionThanks($id)
 	{
 
-		return [
+		$template = [
 			"user" => $this->userFacade->getUser(),
 		];
+
+		$template = $this->cartService->create($template);
+
+		return $template;
 	}
 
 }
