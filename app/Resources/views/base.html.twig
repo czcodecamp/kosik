@@ -15,7 +15,47 @@
     <link href="/bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <!-- Custom CSS -->
     <link href="/bootstrap/css/shop-homepage.css" rel="stylesheet">
+    <style>
+        ul.dropdown-cart{
+            min-width:250px;
+        }
+        ul.dropdown-cart li .item{
+            display:block;
+            padding:3px 10px;
+            margin: 3px 0;
+        }
+        ul.dropdown-cart li .item:hover{
+            background-color:#f3f3f3;
+        }
+        ul.dropdown-cart li .item:after{
+            visibility: hidden;
+            display: block;
+            font-size: 0;
+            content: " ";
+            clear: both;
+            height: 0;
+        }
 
+        ul.dropdown-cart li .item-left{
+            float:left;
+        }
+        ul.dropdown-cart li .item-left img,
+        ul.dropdown-cart li .item-left span.item-info{
+            float:left;
+        }
+        ul.dropdown-cart li .item-left span.item-info{
+            margin-left:10px;
+        }
+        ul.dropdown-cart li .item-left span.item-info span{
+            display:block;
+        }
+        ul.dropdown-cart li .item-right{
+            float:right;
+        }
+        ul.dropdown-cart li .item-right button{
+            margin-top:14px;
+        }
+    </style>
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
@@ -53,15 +93,46 @@
                     <a href="{{ path("contact") }}">Kontakt</a>
                 </li>
             </ul>
-            <p class="navbar-text navbar-right">
-            {% if user is defined and user %}
-                <a href="{{ path("user_settings") }}" class="navbar-link">{{ user.username }}</a>
-                | <a href="{{ path("user_logout") }}" class="navbar-link">Odhlásit</a>
-            {% else %}
-                <a href="{{ path("user_login") }}" class="navbar-link">Přihlásit</a>
-                | <a href="{{ path("user_registration") }}" class="navbar-link">Registrovat</a>
-            {% endif %}
-            </p>
+            <ul class="nav navbar-nav navbar-right">
+                {% if user is defined and user %}
+                    <li>
+                        <a href="{{ path("user_settings") }}" class="navbar-link">{{ user.username }}</a>
+                    </li>
+                    <li>
+                        <a href="{{ path("user_logout") }}" class="navbar-link">Odhlásit</a>
+                    </li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"> <span class="glyphicon glyphicon-shopping-cart"></span> {{ cartItems|length }} ks - {{ totalPrice }} Kč<span class="caret"></span></a>
+                        <ul class="dropdown-menu dropdown-cart" role="menu">
+                            {% for item in cartItems %}
+                                <li>
+                            <span class="item">
+                                <span class="item-left">
+                                    <img src="{{ item.product.image }}" width="80">
+                                    <span class="item-info">
+                                        <span>{{ item.product.title }}</span>
+                                        <span>{{ item.pricePerItem }} Kč</span>
+                                    </span>
+                                </span>
+                                <span class="item-right">
+                                    <a href="{{ path("cart_remove_item", {"id": item.id }) }}" class="btn btn-xs btn-danger pull-right">x</a>
+                                </span>
+                            </span>
+                                </li>
+                            {% endfor %}
+                            <li class="divider"></li>
+                            <li><a class="text-center" href="{{ path("cart_detail") }}">Zobrazit košík</a></li>
+                        </ul>
+                    </li>
+                {% else %}
+                    <li>
+                        <a href="{{ path("user_login") }}" class="navbar-link">Přihlásit</a>
+                    </li>
+                    <li>
+                        <a href="{{ path("user_registration") }}" class="navbar-link">Registrovat</a>
+                    </li>
+                {% endif %}
+            </ul>
         </div>
         <!-- /.navbar-collapse -->
     </div>
