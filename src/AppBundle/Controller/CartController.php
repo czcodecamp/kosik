@@ -10,6 +10,7 @@ use AppBundle\Facade\UserFacade;
 use AppBundle\FormType\CartFormType;
 use AppBundle\FormType\VO\CartItemVO;
 use AppBundle\FormType\VO\CartVO;
+use AppBundle\Service\Cart;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\Form\FormFactory;
@@ -43,13 +44,17 @@ class CartController
 	/** @var FormFactory */
 	private $formFactory;
 
+	/** @var Cart */
+	private $cartService;
+
 	public function __construct(
 		UserFacade $userFacade,
 		CartFacade $cartFacade,
 		CartItemFacade $cartItemFacade,
 		ProductFacade $productFacade,
 		FormFactory $formFactory,
-		RouterInterface $router
+		RouterInterface $router,
+		Cart $cartService
 	) {
 
 		$this->userFacade = $userFacade;
@@ -58,6 +63,7 @@ class CartController
 		$this->productFacade = $productFacade;
 		$this->formFactory = $formFactory;
 		$this->router = $router;
+		$this->cartService = $cartService;
 	}
 
 	/**
@@ -87,12 +93,13 @@ class CartController
 			return RedirectResponse::create($this->router->generate("cart_detail"));
 		}
 
-		return [
+		$template = [
 			"form" => $form->createView(),
-			'totalPrice' => $totalPrice,
-			'cartItems' => $cartItems,
 			"user" => $this->userFacade->getUser(),
 		];
+		$template = $this->cartService->create($template);
+
+		return $template;
 	}
 	/**
 	 * @Route("/kosik/remove/{id}", name="cart_remove_item", requirements={"id": "\d+"})

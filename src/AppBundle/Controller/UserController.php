@@ -1,5 +1,7 @@
 <?php
 namespace AppBundle\Controller;
+
+use AppBundle\Service\Cart;
 use AppBundle\Entity\User;
 use AppBundle\Facade\UserFacade;
 use AppBundle\FormType\AddressFormType;
@@ -31,18 +33,23 @@ class UserController
 	private $entityManager;
 	private $router;
 
+	/** @var Cart */
+	private $cartService;
+
 	public function __construct(
 		UserFacade $userFacade,
 		FormFactory $formFactory,
 		PasswordEncoderInterface $passwordEncoder,
 		EntityManager $entityManager,
-		RouterInterface $router
+		RouterInterface $router,
+		Cart $cartService
 	) {
 		$this->userFacade = $userFacade;
 		$this->formFactory = $formFactory;
 		$this->passwordEncoder = $passwordEncoder;
 		$this->entityManager = $entityManager;
 		$this->router = $router;
+		$this->cartService = $cartService;
 	}
 
 	/**
@@ -72,9 +79,13 @@ class UserController
 			return RedirectResponse::create($this->router->generate("homepage"));
 		}
 
-		return [
+		$template = [
 			"form" => $form->createView(),
 		];
+
+		$template = $this->cartService->create($template);
+
+		return $template;
 	}
 
 	/**
@@ -113,10 +124,14 @@ class UserController
 			$this->userFacade->saveUserSettings($settingsVO);
 		}
 
-		return [
+		$template = [
 			"form" => $form->createView(),
 			"user" => $this->userFacade->getUser(),
 		];
+
+		$template = $this->cartService->create($template);
+
+		return $template;
 	}
 
 	/**
@@ -145,10 +160,14 @@ class UserController
 			return RedirectResponse::create($this->router->generate("user_settings"));
 		}
 
-		return [
+		$template = [
 			"form" => $form->createView(),
 			"user" => $this->userFacade->getUser(),
 		];
+
+		$template = $this->cartService->create($template);
+
+		return $template;
 	}
 
 }

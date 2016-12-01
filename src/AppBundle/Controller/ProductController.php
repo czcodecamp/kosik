@@ -1,6 +1,7 @@
 <?php
 namespace AppBundle\Controller;
 
+use AppBundle\Service\Cart;
 use AppBundle\Facade\ProductFacade;
 use AppBundle\Facade\WarehouseProductFacade;
 use AppBundle\FormType\CartAddFormType;
@@ -25,17 +26,22 @@ class ProductController
 	private $formFactory;
 	private $router;
 
+	/** @var Cart */
+	private $cartService;
+
 	public function __construct(
 		ProductFacade $productFacade,
 		WarehouseProductFacade $warehouseProductFacade,
 		FormFactory $formFactory,
-		RouterInterface $router
+		RouterInterface $router,
+		Cart $cartService
 	)
 	{
 		$this->productFacade = $productFacade;
 		$this->warehouseProductFacade = $warehouseProductFacade;
 		$this->formFactory = $formFactory;
 		$this->router = $router;
+		$this->cartService = $cartService;
 	}
 	/**
 	 * @Route("/product/{slug}", name="product_detail")
@@ -67,11 +73,15 @@ class ProductController
 			return RedirectResponse::create($this->router->generate("cart_add_item", $item));
 		}
 
-		return [
+		$template = [
 			"product" => $product,
 			"warehouseProducts" => $warehouseProducts,
 			"form" => $form->createView(),
 		];
+
+		$template = $this->cartService->create($template);
+
+		return $template;
 	}
 
 }

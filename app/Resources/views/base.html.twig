@@ -101,6 +101,7 @@
                     <li>
                         <a href="{{ path("user_logout") }}" class="navbar-link">Odhlásit</a>
                     </li>
+                    {% if cartItems %}
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"> <span class="glyphicon glyphicon-shopping-cart"></span> {{ cartItems|length }} ks - {{ totalPrice }} Kč<span class="caret"></span></a>
                         <ul class="dropdown-menu dropdown-cart" role="menu">
@@ -124,6 +125,7 @@
                             <li><a class="text-center" href="{{ path("cart_detail") }}">Zobrazit košík</a></li>
                         </ul>
                     </li>
+                    {% endif %}
                 {% else %}
                     <li>
                         <a href="{{ path("user_login") }}" class="navbar-link">Přihlásit</a>
