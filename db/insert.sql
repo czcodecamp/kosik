@@ -113,22 +113,22 @@ VALUES
   (1687945,13),
   (1688572,14);
 
-INSERT INTO codecamp.user (id, email, password, first_name, last_name, phone) VALUES (1, 'info@alza.cz', 'abcd
+INSERT INTO `user` (id, email, password, first_name, last_name, phone) VALUES (1, 'info@alza.cz', 'abcd
 ', 'Alza', 'Alza', '123456789');
 
-INSERT INTO codecamp.address (user_id, first_name, last_name, street, city, post_code, phone)
+INSERT INTO `address` (user_id, first_name, last_name, street, city, post_code, phone)
 VALUES
   (1, 'Alza', 'Alza', 'Jateční 33a', 'Praha', '17000', '123456789'),
   (1, 'Alza', 'Alza', 'Budějovická 13', 'Praha', '14000', '987654321'),
   (1, 'Alza', 'Alza', 'Štefánikova 203/23', 'Praha', '15000', '987654321');
 
-INSERT INTO codecamp.warehouse (address_id, type, name, open_from, open_to, gps)
+INSERT INTO `warehouse` (address_id, type, name, open_from, open_to, gps)
 VALUES
   (1, 'stock', 'Showroom', '8:00', '21:00', 'gps'),
   (2, 'store', 'Budějovická', '10:00', '20:00', 'gps'),
   (3, 'store', 'Anděl', '10:00', '20:00', 'gps');
 
-INSERT INTO codecamp.warehouse_product (product_id, warehouse_id, quantity, expected_arrival)
+INSERT INTO `warehouse_product` (product_id, warehouse_id, quantity, expected_arrival)
 VALUES
   (1245717, 1, 1, '2016-09-15 09:08:49'),
   (1318256, 1, 2, '2016-09-15 09:08:49'),
