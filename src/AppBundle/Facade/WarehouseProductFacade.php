@@ -4,6 +4,7 @@ namespace AppBundle\Facade;
 
 use AppBundle\Entity\Product;
 use AppBundle\Entity\Warehouse;
+use AppBundle\Entity\WarehouseProduct;
 use AppBundle\Repository\WarehouseProductRepository;
 
 class WarehouseProductFacade
@@ -21,8 +22,13 @@ class WarehouseProductFacade
 		]);
 	}
 
+	/**
+	 * @param Product $product
+	 * @param Warehouse $warehouse
+	 * @return WarehouseProduct
+	 */
 	public function findByProductAndWarehouse(Product $product, Warehouse $warehouse) {
-		return $this->warehouseProductRepository->findBy([
+		return $this->warehouseProductRepository->findOneBy([
 			"product" => $product,
 			"warehouse" => $warehouse,
 		]);

@@ -3,8 +3,10 @@
 namespace AppBundle\Facade;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Cart;
+use AppBundle\Entity\CartItem;
 use AppBundle\Entity\Order;
 use AppBundle\Entity\User;
+use AppBundle\Entity\Warehouse;
 use AppBundle\FormType\VO\OrderVO;
 use AppBundle\Repository\AddressRepository;
 use AppBundle\Repository\OrderRepository;
@@ -18,6 +20,8 @@ use Swift_Mailer;
  * @author Jan Klat <jenik@klatys.cz>
  */
 class OrderFacade {
+
+	const DEFAULT_STOCK = 1;
 
 	/** @var OrderRepository */
 	private $orderRepository;
@@ -43,8 +47,14 @@ class OrderFacade {
 	/** @var CartItemFacade */
 	private $cartItemFacade;
 
+	/** @var WarehouseProductFacade */
+	private $warehouseProductFacade;
+
 	/** @var  Swift_Mailer */
 	private $swiftMailer;
+
+	/** @var CartItem */
+	private $cartItem;
 
 	public function __construct(
 		EntityManager $entityManager,
@@ -55,6 +65,8 @@ class OrderFacade {
 		CartFacade $cartFacade,
 		AddressRepository $addressRepository,
 		CartItemFacade $cartItemFacade,
+		WarehouseProductFacade $warehouseProductFacade,
+		CartItem $cartItem,
 		Swift_Mailer $swiftMailer
 	) {
 		$this->entityManager = $entityManager;
@@ -65,6 +77,8 @@ class OrderFacade {
 		$this->cartFacade = $cartFacade;
 		$this->addressRepository = $addressRepository;
 		$this->cartItemFacade = $cartItemFacade;
+		$this->warehouseProductFacade = $warehouseProductFacade;
+		$this->cartItem = $cartItem;
 		$this->swiftMailer = $swiftMailer;
 	}
 
@@ -102,6 +116,8 @@ class OrderFacade {
 
 			$order->setDeliveryWarehouse($warehouse);
 		} else {
+			$warehouse = $this->warehouseRepository->find(static::DEFAULT_STOCK);
+
 			if ($orderVO->getAddressId() === 0) {
 				$addressVO = $orderVO->getDelivery();
 
@@ -127,6 +143,8 @@ class OrderFacade {
 			$this->entityManager->flush($order->getDeliveryAddress());
 		}
 
+		$this->decreaseStockItems($warehouse, $cart);
+
 		$this->entityManager->persist($order);
 		$this->entityManager->flush($order);
 
@@ -135,6 +153,21 @@ class OrderFacade {
 		$this->save($order);
 
 		return $order;
+	}
+
+	public function decreaseStockItems(Warehouse $warehouse, Cart $cart)
+	{
+		$cartItems = $this->cartItemFacade->findByCart($cart);
+
+		foreach ($cartItems as $cartItem) {
+			$warehouseProduct = $this->warehouseProductFacade->findByProductAndWarehouse($cartItem->getProduct(), $warehouse);
+
+			$orderedCount = $cartItem->getQuantity();
+
+			$warehouseProduct->decreaseQuantityBy($orderedCount);
+
+			$this->entityManager->flush($warehouseProduct);
+		}
 	}
 
 	public function sendOrderEmail($order)

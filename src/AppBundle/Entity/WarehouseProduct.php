@@ -127,4 +127,12 @@ class WarehouseProduct
 		return $this;
 	}
 
+	/**
+	 * Decrease quantity by number to minimum 0
+	 * @param $number
+	 */
+	public function decreaseQuantityBy($number)
+	{
+		$this->quantity = max($this->quantity - $number, 0);
+	}
 }
